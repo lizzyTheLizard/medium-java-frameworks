@@ -1,0 +1,124 @@
+{
+  "realm": "blog",
+  "enabled": true,
+  "registrationAllowed": true,
+  "roles": {
+    "client": {
+      "blog": [
+        {
+          "name": "writer",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {}
+        },
+        {
+          "name": "admin",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {}
+        }
+      ]
+    }
+  },
+  "clients": [
+    {
+      "clientId": "blog",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "publicClient": true,
+      "enabled": true,
+      "redirectUris": [
+        "http://localhost:8080/login/oauth2/code/idp"
+      ],
+      "protocolMappers": [
+        {
+          "name": "client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "user.attribute": "foo",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "resource_access.${client_id}.roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "firstName": "Admin",
+      "lastName": "Administrator",
+      "email": "admin@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "secretData": "{\"value\":\"X5VzHBFcqsGCADyLVNnjSSB8lNXn53IwRpMr3Q5h92OGZ/hEZ6puofoIuMaVTy4LqiXzVEzzLcOfHJ8oT4B3cg==\",\"salt\":\"sNu2UOPzF3BzMZibQ0sfVQ==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+        }
+      ],
+      "clientRoles": {
+        "blog": [
+          "admin"
+        ]
+      }
+    },
+    {
+      "username": "none",
+      "enabled": true,
+      "firstName": "None",
+      "lastName": "Nobody",
+      "email": "none@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "secretData": "{\"value\":\"Yyspf0vHoHLlSwqOrAdZLORXoxjMPu7pqzG2mWrv/30edZrlCfqYx6yQF+MIt8RVb+WprnD/CvOvLwFkwVXQ7w==\",\"salt\":\"NI0L1ZuUl1hYuARLJZLeIQ==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+        }
+      ]
+    },
+    {
+      "username": "writer",
+      "enabled": true,
+      "firstName": "Pen",
+      "lastName": "Writer",
+      "email": "writer@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "secretData": "{\"value\":\"GcI4uwd72BON6E9NfHv5k+FudWzLFqh83s+U2ko/56+e/gvh0lNkuycBgvWS7EEozxcjnsTCSt4XK3n4d8Aslw==\",\"salt\":\"NifoP0NBQv3UBbKvoJvVeQ==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+        }
+      ],
+      "clientRoles": {
+        "blog": [
+          "writer"
+        ]
+      }
+    }
+  ],
+  "eventsEnabled": true,
+  "eventsListeners": [
+    "jboss-logging"
+  ],
+  "enabledEventTypes": [
+    "LOGIN_ERROR",
+    "CLIENT_LOGIN",
+    "CODE_TO_TOKEN_ERROR",
+    "LOGIN",
+    "TOKEN_EXCHANGE",
+    "LOGOUT",
+    "REGISTER",
+    "TOKEN_EXCHANGE_ERROR",
+    "PERMISSION_TOKEN",
+    "LOGOUT_ERROR"
+  ],
+  "adminEventsEnabled": false,
+  "adminEventsDetailsEnabled": false
+}

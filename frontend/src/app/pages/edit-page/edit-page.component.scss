@@ -1,0 +1,25 @@
+form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 500px;
+}
+
+.content {
+  flex-grow: 1;
+}
+
+
+.button-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.button-bar button {
+  flex-grow: 0;
+  min-width: 100px;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+

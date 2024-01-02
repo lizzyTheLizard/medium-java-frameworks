@@ -1,0 +1,258 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Blogpost API
+servers:
+  - url: http://localhost:8080/
+paths:
+  /api/posts:
+    get:
+      tags:
+        - Blog
+      operationId: getAllPosts
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: number
+      responses:
+        '200':
+          description: A list of blog posts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Posts'
+  /api/posts/{id}:
+    get:
+      tags:
+        - Blog
+      operationId: getPost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single blog post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Post not found
+    put:
+      tags:
+        - Blog
+      operationId: createOrUpdatePost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUpdate'
+      responses:
+        '201':
+          description: Post created or updated
+        '401':
+          description: Not logged in
+        '403':
+          description: Not allowed to change post
+    delete:
+      tags:
+        - Blog
+      operationId: deletePost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Post deleted
+        '401':
+          description: Not logged in
+        '403':
+          description: Not allowed to delete post
+  /api/login:
+    get:
+      description: Check if the user is logged in
+      tags:
+        - Login
+      operationId: getUser
+      responses:
+        '200':
+          description: The current user details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+        '401':
+          description: Not logged in
+    delete:
+      description: Logs the user out
+      tags:
+        - Login
+      operationId: logout
+      responses:
+        '201':
+          description: The user has been logged out
+        '401':
+          description: Not logged in
+  /api/start-login:
+    get:
+      description: Create a new login, redirect the user to the login page
+      tags:
+        - Login
+      operationId: login
+      parameters:
+        - name: redirect
+          description: URL to redirect after login
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '201':
+          description: The user is alreay logged in
+        '302':
+          description: Redirect to login site
+components:
+  schemas:
+    PostUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+          example: A Blogpost
+          maxLength: 256
+        summary:
+          type: string
+          example: A short summary of the post
+          maxLength: 1000
+        content:
+          type: string
+          example: The actual blog post
+      required:
+        - id
+        - title
+        - summary
+        - content
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+          example: A Blogpost
+          maxLength: 256
+        summary:
+          type: string
+          example: A short summary of the post
+          maxLength: 1000
+        content:
+          type: string
+          example: The actual blog post
+        author:
+          $ref: '#/components/schemas/Author'
+        created:
+          type: string
+          format: datetime
+          example: '2023-12-03T15:00:00.00Z'
+        updated:
+          type: string
+          format: datetime
+          example: '2023-12-03T15:00:00.00Z'
+      required:
+        - id
+        - title
+        - summary
+        - content
+        - author
+        - created
+        - updated
+    Posts:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          title:
+            type: string
+            example: A Blogpost
+            maxLength: 256
+          summary:
+            type: string
+            example: A short summary of the post
+            maxLength: 1000
+          author:
+            $ref: '#/components/schemas/Author'
+          created:
+            type: string
+            format: datetime
+            example: '2023-12-03T15:00:00.00Z'
+          updated:
+            type: string
+            format: datetime
+            example: '2023-12-03T15:00:00.00Z'
+        required:
+          - id
+          - title
+          - summary
+          - author
+          - created
+          - updated
+    Author:
+      type: object
+      properties:
+        id:
+          type: string
+        firstname:
+          type: string
+          example: Hans
+        lastname:
+          type: string
+          example: Muster
+      required:
+        - id
+        - firstname
+        - lastname
+    Login:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        firstname:
+          type: string
+          example: Hans
+        lastname:
+          type: string
+          example: Muster
+        roles:
+          type: array
+          items:
+            type: string
+          example: [ 'ADMIN' ]
+      required:
+        - id
+        - firstname
+        - lastname
+        - roles

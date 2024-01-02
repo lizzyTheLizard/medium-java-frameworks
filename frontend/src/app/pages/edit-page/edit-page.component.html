@@ -1,0 +1,34 @@
+<form [formGroup]="form">
+  <mat-form-field appearance="fill">
+    <mat-label>Title</mat-label>
+    <input autocomplete="off" formControlName="title" matInput/>
+    <mat-error *ngIf="this.form.controls.title.invalid">Not a valid title, must be between 3 and 256
+      characters long
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Summary</mat-label>
+    <textarea formControlName="summary" matInput></textarea>
+    <mat-error *ngIf="this.form.controls.summary.invalid">Not a valid summary, must be between 3 and
+      1000 characters long
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="content">
+    <mat-label>Content</mat-label>
+    <textarea formControlName="content" matInput></textarea>
+    <mat-error *ngIf="this.form.controls.content.invalid">Not a valid content, must be between 3 and
+      100000 characters long
+    </mat-error>
+  </mat-form-field>
+  <div class="button-bar">
+    <button (click)="save()" [disabled]="!form.valid" color="primary" mat-raised-button>
+      <mat-icon>done</mat-icon>
+      <span>Speichern</span>
+    </button>
+    <button (click)="delete()" [disabled]="id===undefined" color="warn" mat-raised-button>
+      <mat-icon>delete</mat-icon>
+      <span>Löschen</span>
+    </button>
+  </div>
+</form>
+

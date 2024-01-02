@@ -1,0 +1,17 @@
+<mat-toolbar color="primary">
+  <a aria-label="Home" class="home-link" routerLink="/">Blogpost Home</a>
+  <span class="spacer"></span>
+  <button *ngIf="(userInfoService.userInfo$ | async) as userInfo" [matMenuTriggerFor]="loginMenu"
+          aria-label="Login Menu" mat-button>
+    <span>{{userInfo.firstname}} {{userInfo.lastname}}</span>
+    <mat-icon>account_circle</mat-icon>
+  </button>
+  <mat-menu #loginMenu="matMenu">
+    <button (click)="userInfoService.logout()" mat-menu-item>Logout</button>
+  </mat-menu>
+  <button (click)="userInfoService.login()"
+          *ngIf="(userInfoService.userInfo$ | async) === undefined"
+          mat-button>
+    <span>Login</span>
+  </button>
+</mat-toolbar>

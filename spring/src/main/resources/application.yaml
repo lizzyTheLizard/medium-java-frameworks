@@ -1,0 +1,21 @@
+spring:
+  security:
+    oauth2.client:
+      registration:
+        idp:
+          clientId: blog
+          scope: openid, profile
+      provider:
+        idp:
+          issuer-uri: http://localhost:8090/auth/realms/blog
+          userNameAttribute: preferred_username
+  datasource:
+    url: jdbc:postgresql://localhost:5432/application
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+    properties.hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: validate
+
