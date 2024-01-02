@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Start Spring Backend" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="spring.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="site.gutschi.medium.compare.spring.ApplicationKt" />
+    <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
