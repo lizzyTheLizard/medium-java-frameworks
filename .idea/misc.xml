@@ -1,6 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="EntryPointsManager">
+    <list size="4">
+      <item index="0" class="java.lang.String" itemvalue="jakarta.enterprise.context.ApplicationScoped" />
+      <item index="1" class="java.lang.String" itemvalue="jakarta.ws.rs.ext.Provider" />
+      <item index="2" class="java.lang.String" itemvalue="org.jboss.resteasy.reactive.server.ServerRequestFilter" />
+      <item index="3" class="java.lang.String" itemvalue="org.jboss.resteasy.reactive.server.ServerResponseFilter" />
+    </list>
+  </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/quarkus" />
+    <file type="web" url="file://$PROJECT_DIR$/quarkus2/test" />
     <file type="web" url="file://$PROJECT_DIR$/spring" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_X" default="true" project-jdk-name="openjdk-21" project-jdk-type="JavaSDK">

@@ -60,8 +60,12 @@ paths:
             schema:
               $ref: '#/components/schemas/PostUpdate'
       responses:
-        '201':
+        '200':
           description: Post created or updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
         '401':
           description: Not logged in
         '403':
@@ -77,8 +81,12 @@ paths:
           schema:
             type: string
       responses:
-        '201':
-          description: Post deleted
+        '200':
+          description: Post created or updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
         '401':
           description: Not logged in
         '403':
@@ -104,8 +112,12 @@ paths:
         - Login
       operationId: logout
       responses:
-        '201':
+        '200':
           description: The user has been logged out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
         '401':
           description: Not logged in
   /api/start-login:
@@ -122,8 +134,13 @@ paths:
           schema:
             type: string
       responses:
-        '201':
+        '200':
           description: The user is alreay logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
         '302':
           description: Redirect to login site
 components:
@@ -256,3 +273,8 @@ components:
         - firstname
         - lastname
         - roles
+    SuccessResponse:
+      type: object
+      properties:
+        id:
+          type: string

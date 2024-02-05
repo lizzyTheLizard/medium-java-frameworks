@@ -1,0 +1,64 @@
+quarkus:
+  openapi-generator:
+    codegen:
+      input-base-dir: "../"
+      include: openapi.yaml
+      spec:
+        openapi_yaml:
+          mutiny: true
+          model-name-prefix: Gen
+  datasource:
+    db-kind: postgresql
+    username: postgres
+    password: postgres
+    reactive:
+      url: "vertx-reactive:postgresql://localhost:5432/application"
+  hibernate-orm:
+    log:
+      sql: false
+    database:
+      generation: none
+  http:
+    auth:
+      basic: true
+      permission:
+        management:
+          paths: /q/metrics
+          auth-mechanism: basic
+          policy: metrics
+        rest:
+          paths: /*
+          auth-mechanism: code
+          policy: permit
+      policy:
+        metrics:
+          roles-allowed: metrics
+    cors:
+      ~: true
+      origins: http://localhost:4200
+      methods: GET,POST,PUT,DELETE
+      access-control-allow-credentials: true
+  security:
+    users:
+      embedded:
+        enabled: true
+        users:
+          admin: admin
+        roles:
+          admin: metrics
+        plain-text: true
+  oidc:
+    auth-server-url: http://localhost:8090/auth/realms/blog
+    client-id: blog
+    application-type: WEB_APP
+    token-state-manager:
+      strategy: id_token
+  csrf-reactive:
+    enabled: false
+    cookie-http-only: false
+    cookie-name: XSRF-TOKEN
+    token-header-name: X-Xsrf-Token
+  log:
+    category:
+      "site.gutschi":
+        level: DEBUG

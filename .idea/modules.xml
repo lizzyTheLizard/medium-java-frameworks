@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/medium-java-frameworks.iml" filepath="$PROJECT_DIR$/.idea/medium-java-frameworks.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/quarkus.main.iml" filepath="$PROJECT_DIR$/.idea/modules/quarkus.main.iml" />
     </modules>
   </component>
 </project>

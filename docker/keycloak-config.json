@@ -29,7 +29,8 @@
       "publicClient": true,
       "enabled": true,
       "redirectUris": [
-        "http://localhost:8080/login/oauth2/code/idp"
+        "http://localhost:8080/login/oauth2/code/idp",
+        "http://localhost:8080/api/start-login"
       ],
       "protocolMappers": [
         {
