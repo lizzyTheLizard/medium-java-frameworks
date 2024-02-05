@@ -65,7 +65,7 @@ tasks.withType<Test> {
 }
 
 openApiGenerate {
-    inputSpec.set("$rootDir/../openapi.yaml")
+    inputSpec.set("$rootDir/../openapi/openapi.yaml")
     generatorName.set("kotlin-spring")
     modelNamePrefix.set("Gen")
     configOptions.put("interfaceOnly", "true")
