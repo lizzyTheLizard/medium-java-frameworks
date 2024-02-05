@@ -8,7 +8,6 @@ import io.vertx.ext.web.RoutingContext
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.ws.rs.container.ContainerRequestContext
 import jakarta.ws.rs.container.ContainerResponseContext
-import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.jboss.logging.Logger
 import org.jboss.resteasy.reactive.server.ServerRequestFilter
@@ -26,10 +25,10 @@ import java.util.*
 @ApplicationScoped
 class CsrfRequestResponseReactiveFilter(@Suppress("CdiInjectionPointsInspection") private val config: CsrfReactiveConfig) {
     private val secureRandom = SecureRandom()
-    private val LOG = Logger.getLogger(CsrfRequestResponseReactiveFilter::class.java)
-    private val CSRF_TOKEN_KEY = "csrf_token"
-    private val CSRF_TOKEN_BYTES_KEY = "csrf_token_bytes"
-    private val CSRF_TOKEN_VERIFIED = "csrf_token_verified"
+    private val logger = Logger.getLogger(CsrfRequestResponseReactiveFilter::class.java)
+    private val csrfTokenKey = "csrf_token"
+    private val csrfTokenBytesKey = "csrf_token_bytes"
+    private val csrfTokenVerifiedKey = "csrf_token_verified"
 
     @ServerRequestFilter
     fun filter(requestContext: ResteasyReactiveContainerRequestContext, routing: RoutingContext) {
@@ -40,7 +39,7 @@ class CsrfRequestResponseReactiveFilter(@Suppress("CdiInjectionPointsInspection"
                 // HMAC SHA256 output is 32 bytes long
                 val expectedCookieTokenSize = if (config.tokenSignatureKey.isPresent) 32 else config.tokenSize
                 if (cookieTokenSize != expectedCookieTokenSize) {
-                    LOG.debugf(
+                    logger.debugf(
                         "Invalid CSRF token cookie size: expected %d, got %d", expectedCookieTokenSize,
                         cookieTokenSize
                     )
@@ -48,7 +47,7 @@ class CsrfRequestResponseReactiveFilter(@Suppress("CdiInjectionPointsInspection"
                     return
                 }
             } catch (e: IllegalArgumentException) {
-                LOG.debugf("Invalid CSRF token cookie: %s", cookieToken)
+                logger.debugf("Invalid CSRF token cookie: %s", cookieToken)
                 requestContext.abortWith(badClientRequest())
                 return
             }
@@ -59,8 +58,8 @@ class CsrfRequestResponseReactiveFilter(@Suppress("CdiInjectionPointsInspection"
                 // Set the CSRF cookie with a randomly generated value
                 val tokenBytes = ByteArray(config.tokenSize)
                 secureRandom.nextBytes(tokenBytes)
-                routing.put(CSRF_TOKEN_BYTES_KEY, tokenBytes)
-                routing.put(CSRF_TOKEN_KEY, Base64.getUrlEncoder().withoutPadding().encodeToString(tokenBytes))
+                routing.put(csrfTokenBytesKey, tokenBytes)
+                routing.put(csrfTokenKey, Base64.getUrlEncoder().withoutPadding().encodeToString(tokenBytes))
             }
         } else if (config.verifyToken) {
             // unsafe HTTP method, token is required
@@ -68,16 +67,16 @@ class CsrfRequestResponseReactiveFilter(@Suppress("CdiInjectionPointsInspection"
             // Check the header first
             val csrfTokenHeaderParam = requestContext.getHeaderString(config.tokenHeaderName)
             if (csrfTokenHeaderParam != null) {
-                LOG.debugf("CSRF token found in the token header")
+                logger.debugf("CSRF token found in the token header")
                 verifyCsrfToken(requestContext, routing, config, cookieToken, csrfTokenHeaderParam)
                 return
             } else {
-                LOG.debugf("No CSRF token found in the token header")
+                logger.debugf("No CSRF token found in the token header")
                 requestContext.abortWith(badClientRequest())
                 return
             }
         } else if (cookieToken == null) {
-            LOG.debug("CSRF token is not found")
+            logger.debug("CSRF token is not found")
             requestContext.abortWith(badClientRequest())
         }
     }
@@ -87,12 +86,12 @@ class CsrfRequestResponseReactiveFilter(@Suppress("CdiInjectionPointsInspection"
         config: CsrfReactiveConfig, cookieToken: String?, csrfToken: String?
     ) {
         if (cookieToken == null) {
-            LOG.debug("CSRF cookie is not found")
+            logger.debug("CSRF cookie is not found")
             requestContext.abortWith(badClientRequest())
             return
         }
         if (csrfToken == null) {
-            LOG.debug("CSRF token is not found")
+            logger.debug("CSRF token is not found")
             requestContext.abortWith(badClientRequest())
             return
         } else {
@@ -101,12 +100,12 @@ class CsrfRequestResponseReactiveFilter(@Suppress("CdiInjectionPointsInspection"
                 config.tokenSignatureKey.get()
             ) else csrfToken
             if (cookieToken != expectedCookieTokenValue) {
-                LOG.debug("CSRF token value is wrong")
+                logger.debug("CSRF token value is wrong")
                 requestContext.abortWith(badClientRequest())
                 return
             } else {
-                routing.put(CSRF_TOKEN_KEY, csrfToken)
-                routing.put(CSRF_TOKEN_VERIFIED, true)
+                routing.put(csrfTokenKey, csrfToken)
+                routing.put(csrfTokenVerifiedKey, true)
                 return
             }
         }
@@ -134,20 +133,20 @@ class CsrfRequestResponseReactiveFilter(@Suppress("CdiInjectionPointsInspection"
         ) {
             val cookieValue: String?
             if (config.tokenSignatureKey.isPresent) {
-                val csrfTokenBytes = routing.get<Any>(CSRF_TOKEN_BYTES_KEY) as ByteArray?
+                val csrfTokenBytes = routing.get<Any>(csrfTokenBytesKey) as ByteArray?
                 if (csrfTokenBytes == null) {
-                    LOG.debug(
-                        "CSRF Request Filter did not set the property " + CSRF_TOKEN_BYTES_KEY
+                    logger.debug(
+                        "CSRF Request Filter did not set the property " + csrfTokenBytesKey
                                 + ", no CSRF cookie will be created"
                     )
                     return
                 }
                 cookieValue = CsrfTokenUtils.signCsrfToken(csrfTokenBytes, config.tokenSignatureKey.get())
             } else {
-                val csrfToken = routing.get<Any>(CSRF_TOKEN_KEY) as String?
+                val csrfToken = routing.get<Any>(csrfTokenKey) as String?
                 if (csrfToken == null) {
-                    LOG.debug(
-                        "CSRF Request Filter did not set the property " + CSRF_TOKEN_KEY
+                    logger.debug(
+                        "CSRF Request Filter did not set the property " + csrfTokenKey
                                 + ", no CSRF cookie will be created"
                     )
                     return
@@ -166,7 +165,7 @@ class CsrfRequestResponseReactiveFilter(@Suppress("CdiInjectionPointsInspection"
     private fun getCookieToken(routing: RoutingContext, config: CsrfReactiveConfig): String? {
         val cookie = routing.request().getCookie(config.cookieName)
         if (cookie == null) {
-            LOG.debug("CSRF token cookie is not set")
+            logger.debug("CSRF token cookie is not set")
             return null
         }
         return cookie.value
@@ -186,19 +185,6 @@ class CsrfRequestResponseReactiveFilter(@Suppress("CdiInjectionPointsInspection"
             cookie.setDomain(config.cookieDomain.get())
         }
         routing.response().addCookie(cookie)
-    }
-
-    /**
-     * Compares if [MediaType] matches the expected type.
-     *
-     *
-     * Note: isCompatible is taking wildcards, which is why we individually compare types and subtypes,
-     * so if someone sends a `Content-Type: *` it will be marked as compatible which is a problem
-     */
-    private fun isMatchingMediaType(contentType: MediaType?, expectedType: MediaType?): Boolean {
-        return if (contentType == null) {
-            (expectedType == null)
-        } else ((contentType.type == expectedType!!.type) && (contentType.subtype == expectedType.subtype))
     }
 
     private fun badClientRequest(): Response {

@@ -1,5 +1,6 @@
 quarkus:
   openapi-generator:
+    # noinspection QsYaml
     codegen:
       input-base-dir: "../"
       include: openapi.yaml

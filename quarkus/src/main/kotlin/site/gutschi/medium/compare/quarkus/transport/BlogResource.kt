@@ -65,6 +65,13 @@ class BlogResource(
     }
 
     private fun create(id: String, genPostUpdate: GenPostUpdate): Uni<Post> {
+        val post = Post()
+        post.id = id
+        post.content = genPostUpdate.content ?: throw BadRequestException("content not defined")
+        post.title = genPostUpdate.title ?: throw BadRequestException("title not defined")
+        post.summary = genPostUpdate.summary ?: throw BadRequestException("summary not defined")
+        post.updated = LocalDateTime.now()
+        post.created = LocalDateTime.now()
         val user = userService.getUser() ?: throw ClientErrorException(Response.Status.UNAUTHORIZED)
         return authorRepository.findById(user.id)
             .onItem().ifNull().switchTo {
@@ -74,14 +81,7 @@ class BlogResource(
                 author.lastname = user.lastName
                 logger.info("Insert author {}", author)
                 authorRepository.persist(author)
-            }.flatMap {
-                val post = Post()
-                post.id = id
-                post.content = genPostUpdate.content ?: throw BadRequestException("content not defined")
-                post.title = genPostUpdate.title ?: throw BadRequestException("title not defined")
-                post.summary = genPostUpdate.summary ?: throw BadRequestException("summary not defined")
-                post.updated = LocalDateTime.now()
-                post.created = LocalDateTime.now()
+            }.onItem().transformToUni { it ->
                 post.author = it
                 ensureAllowToEdit(post)
                 logger.info("Created new post {}", post)
@@ -121,7 +121,7 @@ class BlogResource(
         if (user.roles.contains(UserService.Role.ADMIN)) {
             return
         }
-        if (user.roles.contains(UserService.Role.WRITER) && post.author.id.equals(user.id)) {
+        if (user.roles.contains(UserService.Role.WRITER) && post.author.id == user.id) {
             return
         }
         throw ForbiddenException()

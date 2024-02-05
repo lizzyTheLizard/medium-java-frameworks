@@ -30,7 +30,7 @@ class MonitorTest {
 
     @Test
     @TestSecurity(user = "testUser", roles = ["admin"])
-    fun metricsNotAllowedforInteractiveUser() {
+    fun metricsNotAllowedForInteractiveUser() {
         When {
             get("/q/metrics")
         } Then {
