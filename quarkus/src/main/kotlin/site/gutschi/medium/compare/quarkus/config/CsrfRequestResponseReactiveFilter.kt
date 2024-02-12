@@ -20,7 +20,7 @@ import java.util.*
 /** This is a copy of io.quarkus.csrf.reactive.runtime.CsrfRequestResponseReactiveFilter,
  * but it does not read the body as this is not required here and does not work with reactive JSON requests
  * (see https://github.com/quarkusio/quarkus/issues/38326)
- * TODO: Enable if https://github.com/quarkusio/quarkus/issues/38326 has been fixed
+ * TODO: After updating to 3.7 (blocked by https://github.com/quarkusio/quarkus/issues/38533) remove this and enable csrf in the config
  **/
 @ApplicationScoped
 class CsrfRequestResponseReactiveFilter(@Suppress("CdiInjectionPointsInspection") private val config: CsrfReactiveConfig) {

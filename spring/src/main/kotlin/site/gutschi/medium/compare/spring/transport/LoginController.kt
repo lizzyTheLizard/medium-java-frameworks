@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.openapitools.api.LoginApi
 import org.openapitools.model.GenLogin
+import org.openapitools.model.GenSuccessResponse
 import org.openapitools.model.GenUser
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -12,7 +13,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.web.bind.annotation.RestController
-import site.gutschi.medium.compare.spring.db.User
+import site.gutschi.medium.compare.spring.config.UserService
 
 
 @RestController
@@ -29,21 +30,22 @@ class LoginController(
         return ResponseEntity.ok(response)
     }
 
-    override fun login(redirect: String?): ResponseEntity<Unit> {
+    override fun login(redirect: String?): ResponseEntity<GenSuccessResponse> {
         val headers = HttpHeaders()
         headers.add("Location", redirect)
-        return ResponseEntity<Unit>(headers, HttpStatus.FOUND)
+        return ResponseEntity<GenSuccessResponse>(headers, HttpStatus.FOUND)
     }
 
-    override fun logout(): ResponseEntity<Unit> {
+    override fun logout(): ResponseEntity<GenSuccessResponse> {
         logger.debug("Start logout")
         val authentication = SecurityContextHolder.getContext().authentication
         val logoutHandler = SecurityContextLogoutHandler()
         logoutHandler.logout(request, response, authentication)
-        return ResponseEntity.ok().build()
+        val response = GenSuccessResponse()
+        return ResponseEntity.ok(response)
     }
 
-    private fun mapToGenUser(user: User): GenUser {
+    private fun mapToGenUser(user: UserService.User): GenUser {
         return GenUser(
             id = user.id,
             firstname = user.firstname,

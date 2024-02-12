@@ -22,7 +22,7 @@ export class UserInfoService {
 
   public login() {
     this.loadingService.start();
-    //TODO: Make this path a variable
+    //This could be made a variable...
     const baseUrl = 'http://localhost:8080';
     const loginPath = '/api/start-login';
     const currentUrlEnc = encodeURIComponent(this.document.location.href);

@@ -1,5 +1,9 @@
 spring:
   security:
+    user:
+      name: admin
+      password: "{noop}admin"
+      roles: METRICS
     oauth2.client:
       registration:
         idp:
@@ -18,4 +22,11 @@ spring:
     properties.hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
       ddl-auto: validate
-
+management:
+  endpoints:
+    web.exposure.include: health, prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+    prometheus:
+      enabled: true

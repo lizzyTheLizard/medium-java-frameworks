@@ -4,19 +4,9 @@ plugins {
     id("io.quarkus")
 }
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
-
-sourceSets {
-    main {
-        java {
-            srcDir(layout.buildDirectory.dir("classes/java/quarkus-generated-sources/open-api-yaml"))
-        }
-    }
-}
-
+group = "site.gutschi.medium.compare"
+version = "1.0.0-SNAPSHOT"
+val javaVersion = JavaVersion.VERSION_17
 val quarkusPlatformGroupId: String by project
 val quarkusPlatformArtifactId: String by project
 val quarkusPlatformVersion: String by project
@@ -47,17 +37,11 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 }
 
-group = "site.gutschi.medium.compare"
-version = "1.0.0-SNAPSHOT"
-
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
 }
 
-tasks.withType<Test> {
-    systemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager")
-}
 allOpen {
     annotation("jakarta.ws.rs.Path")
     annotation("jakarta.enterprise.context.ApplicationScoped")
@@ -65,9 +49,24 @@ allOpen {
     annotation("io.quarkus.test.junit.QuarkusTest")
 }
 
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir(layout.buildDirectory.dir("classes/java/quarkus-generated-sources/open-api-yaml"))
+        }
+    }
+}
+
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
+    kotlinOptions.jvmTarget = javaVersion.toString()
     kotlinOptions.javaParameters = true
 }
 
-
+tasks.withType<Test> {
+    systemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager")
+}

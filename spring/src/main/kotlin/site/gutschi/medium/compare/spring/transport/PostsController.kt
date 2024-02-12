@@ -1,20 +1,17 @@
 package site.gutschi.medium.compare.spring.transport
 
 import org.openapitools.api.BlogApi
-import org.openapitools.model.GenAuthor
-import org.openapitools.model.GenPost
-import org.openapitools.model.GenPostUpdate
-import org.openapitools.model.GenPostsInner
+import org.openapitools.model.*
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
+import site.gutschi.medium.compare.spring.config.UserService
 import site.gutschi.medium.compare.spring.db.Author
 import site.gutschi.medium.compare.spring.db.Post
 import site.gutschi.medium.compare.spring.db.PostsRepository
-import site.gutschi.medium.compare.spring.db.Role
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -43,7 +40,7 @@ class PostsController(
         return ResponseEntity.ok(list)
     }
 
-    override fun deletePost(id: String): ResponseEntity<Unit> {
+    override fun deletePost(id: String): ResponseEntity<GenSuccessResponse> {
         logger.debug("Delete Post {}", id)
 
         postsRepository.findById(id)
@@ -51,14 +48,16 @@ class PostsController(
                 { ensureAllowToEdit(it) },
                 { throw ResponseStatusException(HttpStatus.NOT_FOUND) })
         postsRepository.deleteById(id)
-        return ResponseEntity.noContent().build()
+        val response = GenSuccessResponse(id = id)
+        return ResponseEntity.ok(response)
     }
 
     @Transactional
-    override fun createOrUpdatePost(id: String, genPostUpdate: GenPostUpdate): ResponseEntity<Unit> {
+    override fun createOrUpdatePost(id: String, genPostUpdate: GenPostUpdate): ResponseEntity<GenSuccessResponse> {
         logger.debug("Create Or Update Post {}", id)
         postsRepository.findById(id).ifPresentOrElse({ update(it, genPostUpdate) }, { create(id, genPostUpdate) })
-        return ResponseEntity.noContent().build()
+        val response = GenSuccessResponse(id = id)
+        return ResponseEntity.ok(response)
     }
 
     private fun update(existing: Post, genPostUpdate: GenPostUpdate) {
@@ -121,9 +120,9 @@ class PostsController(
     private fun ensureAllowToEdit(post: Post) {
         val user = userService.getCurrentUser()
             ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        if (user.roles.contains(Role.ADMIN))
+        if (user.roles.contains(UserService.Role.ADMIN))
             return
-        if (user.roles.contains(Role.WRITER) && post.author.id === user.id) {
+        if (user.roles.contains(UserService.Role.WRITER) && post.author.id == user.id) {
             return
         }
         throw ResponseStatusException(HttpStatus.FORBIDDEN)

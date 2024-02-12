@@ -1,4 +1,4 @@
-package site.gutschi.medium.compare.spring
+package site.gutschi.medium.compare.quarkus
 
 import io.quarkus.test.common.http.TestHTTPEndpoint
 import io.quarkus.test.junit.QuarkusTest

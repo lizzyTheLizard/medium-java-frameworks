@@ -1,4 +1,4 @@
-package site.gutschi.medium.compare.spring
+package site.gutschi.medium.compare.quarkus
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.quarkus.csrf.reactive.runtime.CsrfReactiveConfig

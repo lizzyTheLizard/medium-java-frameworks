@@ -1,4 +1,4 @@
-package site.gutschi.medium.compare.spring
+package site.gutschi.medium.compare.quarkus
 
 import io.quarkus.csrf.reactive.runtime.CsrfReactiveConfig
 import io.quarkus.hibernate.reactive.panache.kotlin.PanacheQuery

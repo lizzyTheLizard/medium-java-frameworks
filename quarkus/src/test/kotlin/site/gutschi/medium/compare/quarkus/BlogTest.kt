@@ -1,4 +1,4 @@
-package site.gutschi.medium.compare.spring
+package site.gutschi.medium.compare.quarkus
 
 import io.quarkus.csrf.reactive.runtime.CsrfReactiveConfig
 import io.quarkus.test.common.http.TestHTTPEndpoint
@@ -8,6 +8,7 @@ import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import jakarta.inject.Inject
+import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.openapi.quarkus.openapi_yaml.api.BlogApi
 import site.gutschi.medium.compare.quarkus.db.Author
@@ -39,12 +40,6 @@ class BlogTest {
         post.created = LocalDateTime.now()
         post.updated = LocalDateTime.now()
 
-        When {
-            get(post.id)
-        } Then {
-            statusCode(404)
-        }
-
         Given {
             body(post)
             cookie(config.cookieName, csrfToken)
@@ -60,7 +55,11 @@ class BlogTest {
             get(post.id)
         } Then {
             statusCode(200)
-            //body(".", Matchers.equalTo(post))
+            body("id", Matchers.equalTo(post.id))
+            body("title", Matchers.equalTo(post.title))
+            body("summary", Matchers.equalTo(post.summary))
+            body("content", Matchers.equalTo(post.content))
+            body("author.id", Matchers.equalTo(post.author.id))
         }
 
     }
